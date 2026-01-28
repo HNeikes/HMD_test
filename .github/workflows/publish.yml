@@ -9,14 +9,41 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
 jobs:
-  main:
-    name: Build, Validate and Deploy
+  publish:
+    name: Build and Publish Multi-Version Spec
     runs-on: ubuntu-24.04
+
+    permissions:
+      contents: write
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: w3c/spec-prod@v1
+      # --- Editor’s Draft (main branch) ---
+      - name: Checkout main
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Publish Editor’s Draft
+        uses: w3c/spec-prod@v1
         with:
           GH_PAGES_BRANCH: gh-pages
+          DESTINATION_DIR: ed
+          VALIDATE_LINKS: false
+          VALIDATE_MARKUP: false
+
+      # --- Version 1.1 ---
+      - name: Checkout v1.1
+        uses: actions/checkout@v2
+        with:
+          ref: v1.1
+          clean: true
+
+      - name: Publish v1
+        uses: w3c/spec-prod@v1
+        with:
+          GH_PAGES_BRANCH: gh-pages
+          DESTINATION_DIR: v1.1
           VALIDATE_LINKS: false
           VALIDATE_MARKUP: false
